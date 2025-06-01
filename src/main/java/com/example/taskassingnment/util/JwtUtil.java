@@ -3,6 +3,8 @@ package com.example.taskassingnment.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,8 +17,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY="c2VjcmV0LWtleS1leGFtcGxlLTI1Ni1iaXRzLXNlY3VyZSE=";
-    private final SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY));
+    @Value("${your_secret_key}")
+    private String SECRET_KEY;
+    private SecretKey key;
+
+    @PostConstruct
+    public void init(){
+       key= Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY));
+    }
 
     public String generateToken(UserDetails userDetails){
         return Jwts.builder()
